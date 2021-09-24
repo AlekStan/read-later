@@ -7,12 +7,10 @@
         function _initDom() {
             self._dom = {};
 
-            //btns
             self._dom.showAddCategory = $("#add-new-category-btn");
             self._dom.backToCategorySelection = $("#back-to-select-category-btn");
             self._dom.addCategory = $("#add-category-btn");
 
-            //divs
             self._dom.newCategorySection = $("#add-new-category-section");
             self._dom.existingCategorySection = $("#select-existing-category-section");
 
@@ -52,11 +50,6 @@
             dataType: "json",
             data: { categoryName: categoryName },
             success: function (data) {
-
-                console.log(data);
-                console.log(data.id);
-                console.log(data.name);
-
                 _onClick();
                 self._dom.categoryDropdown.append($('<option>', {
                     value: data.id,

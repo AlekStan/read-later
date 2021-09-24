@@ -45,6 +45,26 @@ namespace ReadLater5.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult CreateAndReturnJsonResult(string categoryName)
+        {
+            if (string.IsNullOrEmpty(categoryName)) return BadRequest();
+
+            var createdCategory = _categoryService.CreateCategory(new Category
+            {
+                Name = categoryName
+            });
+
+            if(createdCategory != null)
+            {
+                var jsonResult = new JsonResult(createdCategory);
+
+                return jsonResult;
+            }
+
+            return new StatusCodeResult(Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError);
+        }
+
         // POST: Categories/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.

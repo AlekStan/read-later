@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ReadLater5.Mapper;
 using Services;
+using Services.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +38,9 @@ namespace ReadLater5
                 .AddEntityFrameworkStores<ReadLaterDataContext>();
 
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBookmarkService, BookmarkService>();
+
+            services.AddAutoMapper(typeof(ControllerMapper).Assembly);
 
             services.AddControllersWithViews();
         }

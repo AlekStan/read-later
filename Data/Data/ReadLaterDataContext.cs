@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class ReadLaterDataContext : IdentityDbContext
+    public class ReadLaterDataContext : IdentityDbContext<User>
 
     {
         public ReadLaterDataContext(DbContextOptions<ReadLaterDataContext> options) : base(options)

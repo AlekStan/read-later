@@ -1,12 +1,18 @@
 using Data;
+using Entity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ReadLater5.Areas.Identity;
 using ReadLater5.Mapper;
 using Services;
 using Services.Implementation;
@@ -34,15 +40,62 @@ namespace ReadLater5
                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ReadLaterDataContext>();
+
+            services.AddDefaultIdentity<User>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireDigit = true;
+            })
+                .AddEntityFrameworkStores<ReadLaterDataContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IBookmarkService, BookmarkService>();
 
             services.AddAutoMapper(typeof(ControllerMapper).Assembly);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(o => o.Filters.Add(new AuthorizeFilter()));
+            services.AddRazorPages();
+
+            services.AddAuthentication()
+                .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = "620148782319698";
+                facebookOptions.AppSecret = "5f3817e67161fb0297822e774849abf8";
+            })
+                .AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection =
+                        Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = "694982185752-69b25fld1budt95jpj8e2fsprkbkj7nh.apps.googleusercontent.com";
+                    options.ClientSecret = "itSwBP_EtrL-iEHcR3J6V0iU";
+                });
+
+            //services.AddAuthentication(o =>
+            //{
+            //    o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    o.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            //})
+            //.AddCookie()
+            //.AddOpenIdConnect(options =>
+            //{
+            //    options.Authority = "https://localhost:5000";
+            //    options.ClientId = "readlater5_web";
+            //    options.ClientSecret = "readlater5_secret";
+            //    options.CallbackPath = "/signin-oidc";
+
+            //    options.Scope.Add("readlater5");
+            //    options.Scope.Add("readlater5_api");
+
+            //    options.SaveTokens = true;
+            //    options.GetClaimsFromUserInfoEndpoint = true;
+
+            //    options.ResponseType = "code";
+            //    options.ResponseMode = "form_post";
+
+            //    options.UsePkce = true;
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

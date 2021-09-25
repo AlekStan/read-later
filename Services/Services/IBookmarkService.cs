@@ -7,7 +7,7 @@ namespace Services
     public interface IBookmarkService
     {
         Bookmark CreateBookmark(Bookmark bookmark);
-        Task<List<Bookmark>> GetBookmarks();
+        Task<List<Bookmark>> GetBookmarks(string userId);
         Task<Bookmark> GetBookmark(int Id);
         bool UpdateBookmark(Bookmark category);
         bool DeleteBookmark(Bookmark category);

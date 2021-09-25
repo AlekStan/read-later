@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ReadLater5.Models;
 using Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace ReadLater5.Controllers
 {
@@ -23,9 +23,10 @@ namespace ReadLater5.Controllers
             _categoryService = categoryService;
             _mapper = mapper;
         }
+
         public async Task<ActionResult<List<BookmarkViewModel>>> Index()
         {
-            var bookmarkList = await _bookmarkService.GetBookmarks();
+            var bookmarkList = await _bookmarkService.GetBookmarks(User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
             var bookmarkViewModelList = _mapper.Map<List<Bookmark>, List<BookmarkViewModel>>(bookmarkList);
 
             if (bookmarkViewModelList == null) return NotFound();
@@ -63,7 +64,8 @@ namespace ReadLater5.Controllers
             if (ModelState.IsValid)
             {
                 var bookmark = _mapper.Map<BookmarkViewModel, Bookmark>(bookmarkViewModel);
-                if(_bookmarkService.CreateBookmark(bookmark) != null) return RedirectToAction("Index");
+                bookmark.UserId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+                if (_bookmarkService.CreateBookmark(bookmark) != null) return RedirectToAction("Index");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
@@ -130,7 +132,7 @@ namespace ReadLater5.Controllers
 
         private void PopulateCreateSelectList(BookmarkViewModel bookmarkViewModel)
         {
-            bookmarkViewModel.Categories = _categoryService.GetCategories().Select(c =>
+            bookmarkViewModel.Categories = _categoryService.GetCategories(User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value).Select(c =>
                                              new SelectListItem
                                              {
                                                  Text = c.Name,

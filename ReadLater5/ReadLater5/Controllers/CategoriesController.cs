@@ -1,11 +1,9 @@
 ﻿using Entity;
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace ReadLater5.Controllers
 {
@@ -19,7 +17,7 @@ namespace ReadLater5.Controllers
         // GET: Categories
         public IActionResult Index()
         {
-            List<Category> model = _categoryService.GetCategories();
+            List<Category> model = _categoryService.GetCategories(User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
             return View(model);
         }
 
@@ -52,7 +50,8 @@ namespace ReadLater5.Controllers
 
             var createdCategory = _categoryService.CreateCategory(new Category
             {
-                Name = categoryName
+                Name = categoryName,
+                UserId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value
             });
 
             if(createdCategory != null)
@@ -74,6 +73,7 @@ namespace ReadLater5.Controllers
         {
             if (ModelState.IsValid)
             {
+                category.UserId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
                 _categoryService.CreateCategory(category);
                 return RedirectToAction("Index");
             }

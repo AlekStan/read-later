@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Services.Implementation
 {
     public class BookmarkService : IBookmarkService
@@ -39,9 +40,9 @@ namespace Services.Implementation
             return await _readLaterDataContext.Bookmark.Include(b => b.Category).Where(b => b.ID == Id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Bookmark>> GetBookmarks()
+        public async Task<List<Bookmark>> GetBookmarks(string userId)
         {
-            return await _readLaterDataContext.Bookmark.Include(b => b.Category).ToListAsync();
+            return await _readLaterDataContext.Bookmark.Where(b => b.UserId == userId).Include(b => b.Category).ToListAsync();
         }
 
         public bool UpdateBookmark(Bookmark bookmark)

@@ -49,3 +49,15 @@
     }
 
 </table>
+@if (User.Identity.IsAuthenticated)
+{
+    <table class="table table-sm">
+        @foreach(var claim in User.Claims)
+                {
+                    <tr>
+                        <td>@claim.Type type</td>
+                        <td>@claim.Value value</td>
+                    </tr>
+                }
+    </table>
+}

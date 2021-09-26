@@ -4,14 +4,16 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(ReadLaterDataContext))]
-    partial class ReadLaterDataContextModelSnapshot : ModelSnapshot
+    [Migration("20210926100455_BookmarkStatisticTableAddTimeColumns")]
+    partial class BookmarkStatisticTableAddTimeColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,13 +64,16 @@ namespace Data.Migrations
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("LastSeenTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Seen")
                         .HasColumnType("bit");
 
                     b.Property<bool>("Shared")
                         .HasColumnType("bit");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("SharedByUser")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");

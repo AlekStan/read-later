@@ -43,7 +43,8 @@
             <td>
                 @Html.ActionLink("Edit", "Edit", new { bookmarkId = item.ID }) |
                 @Html.ActionLink("Details", "Details", new { bookmarkId = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { bookmarkId = item.ID })
+                @Html.ActionLink("Delete", "Delete", new { bookmarkId = item.ID }) |
+                @Html.ActionLink("Share", "Share", new { bookmarkId = item.ID })
             </td>
         </tr>
     }

@@ -9,6 +9,7 @@ namespace ReadLater5.Mapper
         public ControllerMapper()
         {
             CreateMap<Bookmark, BookmarkViewModel>().ReverseMap();
+            CreateMap<BookmarkStatistic, BookmarkStatisticItemViewModel>().ReverseMap();
         }
     }
 }

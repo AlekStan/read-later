@@ -1,0 +1,128 @@
+﻿@model BookmarkStatisticViewModel
+
+@{
+    ViewBag.Title = "Bookmark Statistic Page";
+}
+
+<h2>Most Popular Bookmarks</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Bookmark URL")
+        </th>
+        <th>
+            @Html.DisplayName("Bookmark Description")
+        </th>
+        <th>
+            @Html.DisplayName("Category Name")
+        </th>
+        <th>
+            @Html.DisplayName("Click Count")
+        </th>
+    </tr>
+
+    @foreach (var item in Model.MostPopularLinks)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bookmark.URL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bookmark.ShortDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bookmark.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClickCount)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Bookmarks", new { bookmarkId = item.Bookmark.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<h2>Shared Links</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Bookmark URL")
+        </th>
+        <th>
+            @Html.DisplayName("Bookmark Description")
+        </th>
+        <th>
+            @Html.DisplayName("Category Name")
+        </th>
+        <th>
+            @Html.DisplayName("User shared")
+        </th>
+    </tr>
+
+    @foreach (var item in Model.SharedLinks)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bookmark.URL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bookmark.ShortDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bookmark.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Bookmarks", new { bookmarkId = item.Bookmark.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<h2>Last Seen Bookmark</h2>
+
+@if (Model.LastSeenLink != null)
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayName("Bookmark URL")
+            </th>
+            <th>
+                @Html.DisplayName("Bookmark Description")
+            </th>
+            <th>
+                @Html.DisplayName("Category Name")
+            </th>
+            <th>
+                @Html.DisplayName("Last Seen Time")
+            </th>
+        </tr>
+
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.LastSeenLink.Bookmark.URL)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.LastSeenLink.Bookmark.ShortDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.LastSeenLink.Bookmark.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.LastSeenLink.CreationTime)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "Bookmarks", new { bookmarkId = Model.LastSeenLink.BookmarkId })
+            </td>
+        </tr>
+
+    </table>
+}

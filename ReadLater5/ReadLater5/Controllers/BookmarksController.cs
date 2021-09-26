@@ -16,11 +16,13 @@ namespace ReadLater5.Controllers
     {
         private IBookmarkService _bookmarkService;
         private ICategoryService _categoryService;
+        private IBookmarkStatisticService _bookmarkStatisticService;
         private readonly IMapper _mapper;
-        public BookmarksController(IBookmarkService bookmarkService, ICategoryService categoryService, IMapper mapper)
+        public BookmarksController(IBookmarkService bookmarkService, ICategoryService categoryService, IBookmarkStatisticService bookmarkStatisticService, IMapper mapper)
         {
             _bookmarkService = bookmarkService;
             _categoryService = categoryService;
+            _bookmarkStatisticService = bookmarkStatisticService;
             _mapper = mapper;
         }
 
@@ -44,6 +46,9 @@ namespace ReadLater5.Controllers
             {
                 return new StatusCodeResult(StatusCodes.Status404NotFound);
             }
+
+            await _bookmarkStatisticService.AddNewBookmarkRecord(bookmark);
+
             var bookmarkViewModel = _mapper.Map<Bookmark, BookmarkViewModel>(bookmark);
             return View(bookmarkViewModel);
         }
@@ -98,7 +103,7 @@ namespace ReadLater5.Controllers
             if (ModelState.IsValid)
             {
                 var bookmark = _mapper.Map<BookmarkViewModel, Bookmark>(bookmarkViewModel);
-                if(_bookmarkService.UpdateBookmark(bookmark)) return RedirectToAction("Index");
+                if (_bookmarkService.UpdateBookmark(bookmark)) return RedirectToAction("Index");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             PopulateCreateSelectList(bookmarkViewModel);
@@ -126,8 +131,45 @@ namespace ReadLater5.Controllers
         public async Task<ActionResult> DeleteConfirmed(int bookmarkId)
         {
             Bookmark bookmark = await _bookmarkService.GetBookmark(bookmarkId);
-            if(_bookmarkService.DeleteBookmark(bookmark)) return RedirectToAction("Index");
+            if (_bookmarkService.DeleteBookmark(bookmark)) return RedirectToAction("Index");
             return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpGet]
+        [Route("Bookmarks/Share/{bookmarkId}")]
+        public async Task<ActionResult> Share(int? bookmarkId)
+        {
+            if (bookmarkId == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            }
+            Bookmark bookmark = await _bookmarkService.GetBookmark((int)bookmarkId);
+            if (bookmark == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status404NotFound);
+            }
+
+            var bookmarkViewModel = _mapper.Map<Bookmark, BookmarkViewModel>(bookmark);
+            return View(bookmarkViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Share(BookmarkViewModel bookmarkViewModel)
+        {
+            if (bookmarkViewModel == null) return BadRequest();
+
+            if (ModelState.IsValid)
+            {
+                Bookmark bookmark = await _bookmarkService.GetBookmark((int)bookmarkViewModel.ID);
+                bookmark.UserId = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+                if (await _bookmarkStatisticService.AddNewSharedBookmarkRecord(bookmark))
+                {
+                    return RedirectToAction("Index");
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return View(bookmarkViewModel);
         }
 
         private void PopulateCreateSelectList(BookmarkViewModel bookmarkViewModel)

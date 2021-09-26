@@ -1,0 +1,65 @@
+﻿@model BookmarkViewModel
+
+@{
+    ViewBag.Title = "Share";
+}
+
+<h2>Share link</h2>
+
+<h3>
+    Are you sure you want to share this bookmark? <br />
+    You can find shared links on Statistic page located in the site header.
+</h3>
+<div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(x => x.CategoryId)
+        @Html.HiddenFor(x => x.Category.Name)
+        @Html.HiddenFor(x => x.URL)
+        @Html.HiddenFor(x => x.ShortDescription)
+
+        <h4>Bookmark</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.URL)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.URL)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ShortDescription)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ShortDescription)
+            </dd>
+
+            <dt>
+                @Html.DisplayName("Category Name")
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Category.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreateDate)
+            </dd>
+        </dl>
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Share link" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
